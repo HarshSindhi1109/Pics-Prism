@@ -1,0 +1,115 @@
+.shipping-page {
+  padding: 4rem 6%;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ================= HEADER ================= */
+.shipping-header {
+  text-align: center;
+  max-width: 850px;
+  margin: auto;
+  margin-bottom: 3rem;
+}
+
+.shipping-header h1 {
+  font-size: 2.4rem;
+  color: #0f172a;
+  margin-bottom: 0.8rem;
+}
+
+.shipping-header p {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* ================= GRID ================= */
+.shipping-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ================= CARD ================= */
+.shipping-card {
+  background: #ffffff;
+  padding: 2.2rem;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shipping-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+.shipping-icon {
+  font-size: 2.7rem;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+.shipping-card h3 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin-bottom: 0.6rem;
+}
+
+.shipping-card p {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* ================= SAFETY ================= */
+.shipping-safety {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.safety-content {
+  background: linear-gradient(90deg, #0f172a, #111827);
+  color: #e5e7eb;
+  padding: 2.5rem;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.safety-icon {
+  font-size: 3rem;
+  color: #38bdf8;
+  margin-bottom: 0.8rem;
+}
+
+.safety-content h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.safety-content p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #cbd5f5;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .shipping-page {
+    padding: 3rem 5%;
+  }
+
+  .shipping-header h1 {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,152 @@
+/* ================= HEADING ================= */
+
+
+
+.order-status .heading {
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 3rem;
+}
+
+.order-status .heading span {
+  color: #fff;
+}
+
+.order-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-items li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.order-items img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 0; /* square images as you prefer */
+}
+
+/* ================= TABLE ================= */
+.order-status .order-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.order-status table {
+  width: 100%;
+  background: #fff;
+  border-radius: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.order-status th {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #fff;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+}
+
+.order-status td {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ================= PRODUCT LIST ================= */
+.order-status td ul {
+  list-style: none;
+  padding: 0;
+}
+
+.order-status td ul li {
+  margin: 0.3rem 0;
+}
+
+/* ================= STATUS BADGES ================= */
+.order-status .status {
+  padding: 6px 15px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+
+  white-space: nowrap;
+  font-size: 1.2rem;
+}
+
+/* .order-status .status-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.order-status .status.pending {
+  background: #6b7280;
+}
+
+.order-status .status.processing {
+  background: #3b82f6;
+}
+
+.order-status .status.shipped {
+  background: #fbbf24;
+}
+
+.order-status .status.delivered {
+  background: #22c55e;
+}
+
+.order-status .status.cancelled {
+  background: #ef4444;
+}
+
+/* ================= BUTTON ================= */
+.order-status button {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.order-status button:hover {
+  transform: translateY(-2px);
+}
+
+/* ================= EMPTY STATE ================= */
+.order-status .no-orders {
+  text-align: center;
+  background: #fff;
+  padding: 4rem 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.order-status .no-orders img {
+  width: 120px;
+  margin-bottom: 1.5rem;
+}
+
+.order-status .no-orders h2 {
+  font-size: 2.2rem;
+  color: #111827;
+}
+
+.order-status .no-orders p {
+  font-size: 1.4rem;
+  color: #6b7280;
+}

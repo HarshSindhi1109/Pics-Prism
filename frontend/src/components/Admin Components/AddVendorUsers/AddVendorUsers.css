@@ -1,0 +1,447 @@
+/* AddVendorUsers.css */
+
+.users-vendors-management {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, sans-serif;
+}
+
+/* Header Section */
+.users-vendors-management .heading {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+}
+
+.users-vendors-management .heading span {
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.loading svg {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #3b82f6;
+}
+
+/* Empty State */
+.empty-text {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Vendors List Container */
+.vendors-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Seller Card */
+.seller-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.seller-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Icon */
+.seller-card .icon {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  color: #3b82f6;
+  opacity: 0.8;
+}
+
+/* Seller Info */
+.seller-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.seller-info p {
+  margin: 0;
+  color: #475569;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.seller-info strong {
+  color: #1e293b;
+  font-weight: 600;
+  min-width: 120px;
+  display: inline-block;
+}
+
+/* Status Badge */
+.pending {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(90deg, #f59e0b20 0%, #fbbf2420 100%);
+  color: #d97706;
+  border: 1px solid #f59e0b;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Action Buttons */
+.item-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f1f5f9;
+}
+
+.approve-btn,
+.reject-btn {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+}
+
+.approve-btn {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.approve-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.reject-btn {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.reject-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Disabled buttons */
+.approve-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Loading spinner in buttons */
+.approve-btn:disabled svg,
+.reject-btn:disabled svg {
+  animation: spin 1s linear infinite;
+}
+
+/* Reject Modal */
+.reject-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.reject-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+.reject-modal h2 {
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.reject-modal textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  font-size: 1.2rem;
+  resize: none;
+  text-transform: none;
+}
+
+.reject-modal textarea:focus {
+  outline: none;
+  border-color: #ef4444;
+}
+
+.confirm-reject-btn {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-reject-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background: #f1f5f9; /* soft gray */
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+
+.view-doc-btn {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+}
+
+.view-doc-btn:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-modal-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  flex: 1;
+  height: 48px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.open-new-btn {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.close-btn {
+  text-decoration: none;
+  color: #eb2525;
+  font-weight: 600;
+  background: none;
+  text-align: right;
+  border: none;
+  cursor: pointer;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .users-vendors-management {
+    padding: 1rem;
+  }
+
+  .users-vendors-management .heading {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .vendors-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .seller-card {
+    padding: 1.5rem;
+  }
+
+  .seller-info p {
+    font-size: 0.875rem;
+  }
+
+  .seller-info strong {
+    min-width: 100px;
+  }
+
+  .item-actions {
+    flex-direction: column;
+  }
+
+  .approve-btn,
+  .reject-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-vendors-management .heading {
+    font-size: 1.75rem;
+  }
+
+  .seller-card {
+    padding: 1.25rem;
+  }
+
+  .seller-card .icon {
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .seller-info p {
+    font-size: 0.8rem;
+  }
+
+  .seller-info strong {
+    min-width: 90px;
+  }
+}
+
+/* Card header effect */
+.seller-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+/* Animation for status change */
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+}
+
+.seller-card.removing {
+  animation: slideOut 0.3s ease forwards;
+}

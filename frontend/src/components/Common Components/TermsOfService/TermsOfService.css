@@ -1,0 +1,171 @@
+.terms-page {
+  padding: 4rem 6%;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ================= HEADER ================= */
+.terms-header {
+  text-align: center;
+  max-width: 900px;
+  margin: auto;
+  margin-bottom: 3rem;
+}
+
+.terms-header-icon {
+  font-size: 3rem;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+.terms-header h1 {
+  font-size: 2.4rem;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.terms-header p {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.last-updated {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ================= CONTENT ================= */
+.terms-content {
+  max-width: 1000px;
+  margin: auto;
+  background: #ffffff;
+  padding: 3rem;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* ================= SECTION ================= */
+.terms-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.terms-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.terms-section h2 {
+  color: #0f172a;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.section-icon {
+  font-size: 1.4rem;
+  color: #2563eb;
+}
+
+.section-icon.warning {
+  color: #ef4444;
+}
+
+.terms-section p {
+  font-size: 1.1rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.terms-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.terms-section li {
+  font-size: 1.1rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.terms-section li:before {
+  content: '•';
+  color: #2563eb;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* ================= CONTACT ================= */
+.terms-contact {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: #f1f5f9;
+  border-radius: 14px;
+  border-left: 4px solid #2563eb;
+}
+
+.terms-contact h3 {
+  font-size: 1.3rem;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.terms-contact p {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+}
+
+.contact-details {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .terms-page {
+    padding: 3rem 5%;
+  }
+
+  .terms-content {
+    padding: 2rem;
+  }
+
+  .terms-header h1 {
+    font-size: 2rem;
+  }
+
+  .terms-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terms-content {
+    padding: 1.5rem;
+  }
+
+  .terms-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+  }
+}

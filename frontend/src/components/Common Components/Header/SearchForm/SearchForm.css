@@ -1,0 +1,25 @@
+.search-form {
+  position: absolute;
+  top: 100%;
+  right: -100%;
+  width: 250px;
+  display: flex;
+  align-items: center;
+  transition: 0.3s ease-in-out;
+  background: #fff;
+  border-radius: 5px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-form.active {
+  right: 20px; /* Makes it visible */
+}
+
+.search-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}

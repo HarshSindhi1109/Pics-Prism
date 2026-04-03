@@ -1,0 +1,169 @@
+.seller-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.seller-form {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.readonly-input {
+  color: black;
+}
+
+/* Inputs */
+.seller-form input,
+.seller-form select {
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  text-transform: none;
+}
+
+.seller-form input:focus,
+.seller-form select:focus {
+  border-color: #16a34a;
+  outline: none;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+/* Dropdown box */
+.dropdown-selected,
+.select-box {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+  white-space: nowrap; /* prevent text wrap */
+  overflow: hidden; /* hide overflow */
+  text-overflow: ellipsis; /* show ... if text too long */
+}
+
+/* Optional: make the dropdown full width of form */
+.custom-select-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%; /* match select box width */
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  z-index: 20;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* Dropdown arrow aligned */
+.select-box .arrow {
+  float: right;
+  margin-left: 8px;
+}
+
+.dropdown-selected:hover {
+  border-color: #16a34a;
+}
+
+/* .dropdown-list {
+  position: absolute;
+  width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  z-index: 10;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.dropdown-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background: #dcfce7;
+} */
+
+.error-text {
+  color: red;
+}
+
+/* Section titles */
+.seller-form h4 {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #166534;
+}
+
+/* Button */
+.seller-form button {
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.seller-form button:hover {
+  background: #15803d;
+}
+
+.status-card {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 50px !important;
+  border-radius: 12px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.status-card.pending {
+  border-top: 5px solid #f4b400;
+  display: block;
+
+}
+
+.status-icon {
+  font-size: 48px;
+  color: #f4b400;
+  margin-bottom: 15px;
+}
+
+.status-card h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.status-card p {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.status-note {
+  font-size: 14px;
+  color: #999;
+}

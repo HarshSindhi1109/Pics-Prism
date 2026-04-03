@@ -1,0 +1,109 @@
+.payment-page {
+  padding: 4rem 6%;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ================= HEADER ================= */
+.payment-header {
+  text-align: center;
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 3rem;
+}
+
+.payment-header h1 {
+  font-size: 2.4rem;
+  color: #0f172a;
+  margin-bottom: 0.8rem;
+}
+
+.payment-header p {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* ================= GRID ================= */
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ================= CARD ================= */
+.payment-card {
+  background: #ffffff;
+  padding: 2.2rem;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.payment-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+}
+
+.payment-icon {
+  font-size: 2.6rem;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+.payment-card h3 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin-bottom: 0.6rem;
+}
+
+.payment-card p {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* ================= SECURITY ================= */
+.payment-security {
+  margin-top: 4rem;
+  background: linear-gradient(90deg, #0f172a, #111827);
+  color: #e5e7eb;
+  padding: 3rem 2rem;
+  border-radius: 18px;
+  text-align: center;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.security-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #38bdf8;
+}
+
+.payment-security h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.payment-security p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #cbd5f5;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .payment-header h1 {
+    font-size: 2rem;
+  }
+
+  .payment-page {
+    padding: 3rem 5%;
+  }
+}

@@ -1,0 +1,330 @@
+/* General Products Selection */
+
+.products {
+  padding: 3rem 8%;
+  background-color: #f8fafc; /* soft light background */
+  min-height: 100vh;
+}
+
+/* ---------- Heading ---------- */
+.products .heading {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-top: 0;
+}
+
+.products .heading span {
+  color: #16a34a; /* light green accent */
+}
+
+/* ---------- Category Filter ---------- */
+.category-filter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.category-drop-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ---------- Ratings ---------- */
+
+.rating-box {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 4px;
+}
+
+.stars {
+  display: flex;
+  justify-content: left !important;
+  gap: 4px;
+  color: #facc15; /* golden yellow */
+  font-size: 1.1rem;
+}
+
+.empty-star {
+  color: #e5e7eb; /* gray */
+}
+
+.rating-text {
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.no-reviews {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: left;
+}
+
+/* ---------- Out of Stock Card ---------- */
+.productmain-card.out-of-stock {
+  background-color: #e5e7eb; /* gray background */
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.productmain-card.out-of-stock:hover {
+  transform: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.productmain-card.out-of-stock .btn {
+  pointer-events: none;
+}
+
+/* ---------- Custom Dropdown ---------- */
+
+.custom-select {
+  position: relative;
+  width: 240px;
+  cursor: pointer;
+}
+
+.select-box {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #111827;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.custom-select.open .select-box {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+}
+
+.arrow {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Dropdown Menu */
+.select-options {
+  position: absolute;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.select-options li {
+  padding: 12px 16px;
+  font-size: 1.1rem;
+  color: #1f2937;
+  transition: background 0.2s, color 0.2s;
+}
+
+.select-options li:hover {
+  background-color: #dcfce7;
+  color: #166534;
+  font-weight: 600;
+}
+
+/* ---------- Products Grid ---------- */
+.products-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+/* ---------- Product Card ---------- */
+.productmain-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.productmain-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Image ---------- */
+.image-container {
+  width: 100%;
+  height: 230px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+}
+
+.productmain-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------- Product Info ---------- */
+.product-info {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.product-info h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.product-info p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.product-info .price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 8px;
+  text-align: left;
+}
+
+/* ---------- Actions ---------- */
+.product-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+}
+
+/* ---------- Add To Cart Button ---------- */
+.btn {
+  width: 70%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  background-color: #22c55e; /* light green */
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #16a34a; /* slightly darker green */
+  transform: scale(1.03);
+}
+
+/* ---------- Wishlist Button ---------- */
+.wishlist-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  height: 44px;
+  width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+  background-color: hsl(0, 86%, 94%);
+}
+
+.wishlist-btn.wishlisted {
+  background-color: hsl(0, 93%, 84%);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .products {
+    padding: 2rem 5%;
+  }
+
+  .products .heading {
+    font-size: 2.3rem;
+  }
+
+  .category-filter {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Pagination ---------- */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.pagination button {
+  min-width: 40px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #dcfce7;
+  border-color: #16a34a;
+  color: #166534;
+}
+
+.pagination button.active {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

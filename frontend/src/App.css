@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+/* Root Variables for Consistency Across Pages */
+:root {
+  --primary: #47cb26;
+  /* --black: #ffffff; */
+  --white: #130f40;
+  --light-color: #666;
+  --box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  --border: 0.2rem solid rgba(0, 0, 0, 0.1);
+  --outline: 0.1rem solid rgba(0, 0, 0, 0.1);
+  --outline-hover: 0.2rem solid var(--black);
+}
+
+/* Apply Global Styling to the App */
+.app {
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: #f9f9f9; /* Light grey background for consistency */
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Global Styling for Consistency */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: none;
+  outline: none;
+}
+
+/* Section & Page Layout */
+section {
+  padding: 3rem 8%;
+}
+
+/* Global Button Styling */
+.btn {
+  margin-top: 1.5rem;
+  display: inline-block;
+  padding: 1rem 3rem;
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: var(--black);
+  border: 0.2rem solid var(--black);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: none;
+  text-align: center;
+}
+
+.btn:hover {
+  color: var(--white);
+  background: var(--primary);
+}
+
+/* Global Heading Styling */
+.heading {
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: var(--black);
+  padding: 2rem 0 3rem;
+  margin-bottom: 2rem;
+}
+
+.heading span {
+  background: var(--primary);
+  color: var(--white);
+  display: inline-block;
+  padding: 0.7rem 3rem;
+  clip-path: polygon(100% 0, 93% 50%, 100% 99%, 0 100%, 7% 50%, 0 0);
+  font-weight: bold;
+}
+
+/* Page Containers for Layout Consistency */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Boxes Inside Grid */
+.box {
+  text-align: center;
+  background: var(--white);
+  padding: 3rem;
+  box-shadow: var(--box-shadow);
+  border-radius: 1rem;
+  outline: var(--outline);
+  outline-offset: -0.5rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box:hover {
+  outline-offset: 0;
+  outline: var(--outline-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  html {
+    font-size: 55%;
+  }
+
+  section {
+    padding: 2.5rem;
+  }
+
+  .btn {
+    padding: 0.8rem 2.5rem;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 50%;
+  }
+
+  section {
+    padding: 2rem;
+  }
+
+  .heading {
+    font-size: 2.8rem;
+  }
+
+  .box {
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 45%;
+  }
+
+  .heading {
+    font-size: 2.5rem;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .box {
+    padding: 2rem;
+  }
+
+  .btn {
+    padding: 0.7rem 2rem;
+    font-size: 1.3rem;
+  }
+}

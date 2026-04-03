@@ -1,0 +1,648 @@
+/* ContactMessages.css */
+
+.admin-contact-container {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, sans-serif;
+  position: relative;
+}
+
+/* Header */
+.admin-contact-container h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+  position: relative;
+  display: inline-block;
+}
+
+.admin-contact-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 2px;
+}
+
+/* Loading State */
+.admin-contact-container p:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 500;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Error State */
+.error {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+  margin: 2rem 0;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Table Container */
+.contact-table {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-collapse: separate;
+  border-spacing: 0;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Table Header */
+.contact-table thead {
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.contact-table th {
+  padding: 1.5rem 1rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  position: relative;
+}
+
+.contact-table th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Table Body */
+.contact-table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.contact-table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: scale(1.002);
+}
+
+.contact-table td {
+  padding: 1.25rem 1rem;
+  color: #475569;
+  font-size: 1.1rem;
+  text-transform: none;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Status Badges */
+.status {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 90px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.status.pending {
+  background: linear-gradient(90deg, #f59e0b20 0%, #fbbf2420 100%);
+  color: #d97706;
+  border: 1px solid #f59e0b;
+}
+
+.status.replied {
+  background: linear-gradient(90deg, #10b98120 0%, #05966920 100%);
+  color: #059669;
+  border: 1px solid #10b981;
+}
+
+.status.new {
+  background: linear-gradient(90deg, #3b82f620 0%, #2563eb20 100%);
+  color: #2563eb;
+  border: 1px solid #3b82f6;
+}
+
+.status.closed {
+  background: linear-gradient(90deg, #6b728020 0%, #4b556320 100%);
+  color: #4b5563;
+  border: 1px solid #6b7280;
+}
+
+/* Seen status */
+.status.seen {
+  background: linear-gradient(90deg, #38bdf820 0%, #0ea5e920 100%);
+  color: #0284c7;
+  border: 1px solid #38bdf8;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+}
+
+/* Seen row styling */
+.contact-table tbody tr:has(.status.seen) {
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.04), transparent);
+}
+
+.contact-table tbody tr:has(.status.seen):hover {
+  background: linear-gradient(
+    90deg,
+    rgba(14, 165, 233, 0.08),
+    rgba(248, 250, 252, 1)
+  );
+}
+
+/* Action Buttons in Table */
+.contact-table td:last-child {
+  display: flex;
+  gap: 0.75rem;
+  border: none;
+  min-width: 320px;
+}
+
+.contact-table button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.contact-table button:first-child {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.contact-table button:first-child:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+}
+
+.contact-table button:nth-child(2) {
+  background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+.contact-table button:nth-child(2):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+}
+
+.delete-btn {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+}
+
+/* Empty State */
+.admin-contact-container p:last-child {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Date Styling */
+.contact-table td:nth-child(5) {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.reply-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1.1rem;
+  resize: none;
+  text-transform: none;
+  outline: none;
+}
+
+.reply-textarea:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Message Modal */
+.message-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.message-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-modal-content h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+  position: relative;
+}
+
+.message-modal-content h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.message-row {
+  text-transform: none;
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.message-row:hover {
+  background: #f1f5f9;
+  transform: translateX(4px);
+}
+
+.message-row strong {
+  color: #1e293b;
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.message-row span {
+  color: #475569;
+  flex: 1;
+}
+
+.message-body {
+  margin: 1.5rem 0 2rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+  color: #334155;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.message-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-body::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.message-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.message-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f1f5f9;
+}
+
+.reply-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.reply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.close-img-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(90deg, #64748b 0%, #475569 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-img-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(100, 116, 139, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .contact-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .contact-table th,
+  .contact-table td {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-contact-container {
+    padding: 1rem;
+  }
+
+  .admin-contact-container h2 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .admin-contact-container h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .contact-table {
+    border-radius: 16px;
+  }
+
+  .contact-table th,
+  .contact-table td {
+    padding: 1rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .status {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
+
+  .contact-table td:last-child {
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+  }
+
+  .contact-table button {
+    min-width: 100%;
+    padding: 0.625rem 1rem;
+  }
+
+  .message-modal-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .message-modal-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .message-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .message-row strong {
+    min-width: auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .reply-btn,
+  .close-img-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-contact-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .contact-table {
+    border-radius: 12px;
+  }
+
+  .contact-table th,
+  .contact-table td {
+    padding: 0.875rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .contact-table th:not(:last-child)::after {
+    display: none;
+  }
+
+  .contact-table td:nth-child(5) {
+    font-size: 0.75rem;
+  }
+
+  .admin-contact-container p:last-child {
+    padding: 3rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .message-modal-content {
+    padding: 1.25rem;
+  }
+
+  .message-modal-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .message-body {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Smooth transitions */
+.contact-table tbody tr {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Status change animation */
+.status {
+  position: relative;
+  overflow: hidden;
+}
+
+.status::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.status:hover::after {
+  left: 100%;
+}
+
+/* Scrollbar styling for modal */
+.message-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-modal-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.message-modal-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.message-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

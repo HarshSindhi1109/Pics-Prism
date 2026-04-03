@@ -1,0 +1,177 @@
+/* ================= REGISTER PAGE CONTAINER ================= */
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(135deg, #020617, #020617);
+  padding: 1rem;
+}
+
+/* ================= REGISTER FORM CARD ================= */
+.register-form {
+  width: 100%;
+  max-width: 440px;
+
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(14px);
+
+  border-radius: 18px;
+  padding: 2.6rem 2.4rem;
+
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  animation: slideUp 0.4s ease;
+}
+
+/* ================= TITLE ================= */
+.register-form h2 {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 1.8rem;
+}
+
+/* ================= LABEL ================= */
+.register-form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  color: #94a3b8;
+}
+
+/* ================= INPUT & SELECT ================= */
+.register-form input,
+.register-form select {
+  width: 100%;
+  padding: 0.75rem 0.95rem;
+  margin-bottom: 1.25rem;
+
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  outline: none;
+  text-transform: none;
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.register-form input::placeholder {
+  color: #64748b;
+}
+
+/* ================= FOCUS STATE ================= */
+.register-form input:focus,
+.register-form select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+/* ================= DROPDOWN ARROW ================= */
+.register-form select {
+  appearance: none;
+  cursor: pointer;
+
+  background-image: linear-gradient(45deg, transparent 50%, #3b82f6 50%),
+    linear-gradient(135deg, #3b82f6 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(50% + 2px),
+    calc(100% - 14px) calc(50% + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* ================= OPTION ================= */
+.register-form option {
+  background-color: #020617;
+  color: #e5e7eb;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 40%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+}
+
+.password-criteria {
+  margin: 10px 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: #d32f2f;
+}
+
+.password-error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* ================= BUTTON ================= */
+.register-form button {
+  width: 100%;
+  padding: 0.8rem;
+
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.register-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.45);
+}
+
+/* ================= LOGIN LINK ================= */
+.login-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #94a3b8;
+}
+
+.login-link a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ================= ANIMATION ================= */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

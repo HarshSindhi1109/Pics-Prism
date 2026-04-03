@@ -1,0 +1,10 @@
+/* UserManagementPage.css */
+.user-management-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+}
+
+.header-spacer {
+  height: 100px; /* Adjust based on your header height */
+}

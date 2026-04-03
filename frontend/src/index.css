@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+/* Root Variables for Consistency */
+:root {
+  --orange: #47cb26;
+  --black: #130f40;
+  --white: #ffffff;
+  --light-color: #666;
+  --box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  --border: 0.2rem solid rgba(0, 0, 0, 0.1);
+  --outline: 0.1rem solid rgba(0, 0, 0, 0.1);
+  --outline-hover: 0.2rem solid var(--black);
+}
+
+/* Global Styling */
+* {
+  text-transform: capitalize;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: none;
+}
+
+/* General Page Styling */
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f5f5f5;
+  padding: 0;
+  margin: 0;
+}
+
+/* Section & Footer Padding */
+section,
+footer {
+  padding: 3rem 8%; /* Balanced Padding */
+}
+
+/* Buttons */
+.btn {
+  margin-top: 1.5rem;
+  display: inline-block;
+  padding: 1rem 3rem;
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: var(--black);
+  border: 0.2rem solid var(--black);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: none;
+  text-align: center;
+}
+
+.btn:hover {
+  color: var(--white);
+  background: var(--orange);
+}
+
+/* Heading Styling */
+.heading {
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: var(--black);
+  padding: 2rem 0 3rem;
+  margin-bottom: 2rem;
+}
+
+.heading span {
+  background: var(--orange);
+  color: var(--white);
+  display: inline-block;
+  padding: 0.7rem 3rem;
+  clip-path: polygon(100% 0, 93% 50%, 100% 99%, 0 100%, 7% 50%, 0 0);
+  font-weight: bold;
+}
+
+/* Grid Layouts */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Boxes Inside Grid */
+.box {
+  text-align: center;
+  background: var(--white);
+  padding: 3rem;
+  box-shadow: var(--box-shadow);
+  border-radius: 1rem;
+  outline: var(--outline);
+  outline-offset: -0.5rem;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box:hover {
+  outline-offset: 0;
+  outline: var(--outline-hover);
+}
+
+/* Images */
+.box img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  object-fit: contain;
+  margin: 1.5rem 0;
+}
+
+/* Headings Inside Boxes */
+.box h3 {
+  font-size: 2.5rem;
+  line-height: 1.5;
+  color: var(--black);
+  margin-top: 1rem;
+}
+
+/* Paragraph Text */
+.box p {
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: var(--light-color);
+  padding: 1rem 0;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 991px) {
+  html {
+    font-size: 55%;
+  }
+
+  section {
+    padding: 2.5rem;
+  }
+
+  .btn {
+    padding: 0.8rem 2.5rem;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 50%;
+  }
+
+  section {
+    padding: 2rem;
+  }
+
+  .heading {
+    font-size: 2.8rem;
+  }
+
+  .box {
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 45%;
+  }
+
+  .heading {
+    font-size: 2.5rem;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .box {
+    padding: 2rem;
+  }
+
+  .btn {
+    padding: 0.7rem 2rem;
+    font-size: 1.3rem;
+  }
+}

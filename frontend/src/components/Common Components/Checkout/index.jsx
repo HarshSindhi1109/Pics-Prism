@@ -102,13 +102,13 @@ export default function Checkout() {
       const orderData = await paymentRes.json();
 
       const options = {
-        key: 'rzp_test_WgxamtVupSULV6',
+        key: process.env.REACT_APP_RAZORPAY_KEY,
         amount: orderData.amount,
         currency: 'INR',
         order_id: orderData.id,
-        name: 'Your Store',
+        name: 'Pics Prism',
         description: 'Purchase',
-
+        
         handler: async function (response) {
           const token = localStorage.getItem('token');
 

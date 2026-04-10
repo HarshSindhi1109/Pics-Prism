@@ -3,6 +3,15 @@ import './OrderStatusManagement.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
+// 🚦 Valid status transitions — mirrors backend logic
+const ALLOWED_TRANSITIONS = {
+  Pending: ['Processing', 'Cancelled'],
+  Processing: ['Shipped', 'Cancelled'],
+  Shipped: ['Delivered'],
+  Delivered: [],
+  Cancelled: [],
+};
+
 const OrderStatus = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,75 +148,95 @@ const OrderStatus = () => {
             </thead>
 
             <tbody>
-              {orders.map((order) => (
-                <tr key={order._id}>
-                  <td>#{order._id?.slice(-6) || 'N/A'}</td>
+              {orders.map((order) => {
+                // 🚦 Compute allowed next statuses for this order
+                const allowedNext = ALLOWED_TRANSITIONS[order.status] ?? [];
+                const isFinal = allowedNext.length === 0;
 
-                  <td>
-                    <ul>
-                      {order.products?.map((product) => (
-                        <li key={product.productId}>
-                          <img
-                            src={`http://localhost:5000${product.imageUrl}`}
-                            alt={product.name}
-                          />
-                          {product.name} (x{product.quantity})
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
+                return (
+                  <tr key={order._id}>
+                    <td>#{order._id?.slice(-6) || 'N/A'}</td>
 
-                  <td>₹{order.amount}</td>
+                    <td>
+                      <ul>
+                        {order.products?.map((product) => (
+                          <li key={product.productId}>
+                            <img
+                              src={`http://localhost:5000${product.imageUrl}`}
+                              alt={product.name}
+                            />
+                            {product.name} (x{product.quantity})
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
 
-                  <td>{new Date(order.createdAt).toLocaleDateString('en-IN')}</td>
+                    <td>₹{order.amount}</td>
 
-                  <td className="status-cell">
-                    <span
-                      className={`status ${order.status.trim().toLowerCase()}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
+                    <td>
+                      {new Date(order.createdAt).toLocaleDateString('en-IN')}
+                    </td>
 
-                  <td>
-                    <div className="custom-select-wrapper">
-                      <div className="custom-select">
-                        <div
-                          className={`selected ${
-                            openDropdownId === order._id ? 'open' : ''
-                          }`}
-                          onClick={(e) => toggleDropdown(order._id, e)}
+                    <td className="status-cell">
+                      <span
+                        className={`status ${order.status
+                          .trim()
+                          .toLowerCase()}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+
+                    <td>
+                      {isFinal ? (
+                        // ✅ Show a locked label for final states
+                        <span
+                          className={`status-final status-final--${order.status.toLowerCase()}`}
                         >
-                          Change
-                        </div>
+                          {order.status === 'Delivered'
+                            ? '✓ Delivered'
+                            : '✕ Cancelled'}
+                        </span>
+                      ) : (
+                        <div className="custom-select-wrapper">
+                          <div className="custom-select">
+                            <div
+                              className={`selected ${
+                                openDropdownId === order._id ? 'open' : ''
+                              }`}
+                              onClick={(e) => toggleDropdown(order._id, e)}
+                            >
+                              Change
+                            </div>
 
-                        {openDropdownId === order._id && (
-                          <div
-                            className="options"
-                            ref={(el) => (dropdownRefs.current[order._id] = el)}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {[
-                              'Pending',
-                              'Processing',
-                              'Shipped',
-                              'Delivered',
-                              'Cancelled',
-                            ].map((status) => (
+                            {openDropdownId === order._id && (
                               <div
-                                key={status}
-                                onClick={() => handleSelect(order._id, status)}
+                                className="options"
+                                ref={(el) =>
+                                  (dropdownRefs.current[order._id] = el)
+                                }
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                {status}
+                                {/* 🚦 Only render allowed next statuses */}
+                                {allowedNext.map((status) => (
+                                  <div
+                                    key={status}
+                                    onClick={() =>
+                                      handleSelect(order._id, status)
+                                    }
+                                  >
+                                    {status}
+                                  </div>
+                                ))}
                               </div>
-                            ))}
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

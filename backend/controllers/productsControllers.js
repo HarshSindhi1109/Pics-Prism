@@ -1,11 +1,23 @@
 const products = require("../models/ProductsModel");
 const sanitizeHTML = require("sanitize-html");
+const fs = require("fs");
+const isImageSafe = require("../utils/imageModeration");
 
 const addProducts = async (req, res) => {
   try {
-    // Check if file was uploaded
     if (!req.file) {
       return res.status(400).json({ error: "Image is required" });
+    }
+
+    // 🔐 IMAGE MODERATION
+    const imagePath = req.file.path;
+    const safe = await isImageSafe(imagePath);
+
+    if (!safe) {
+      fs.unlinkSync(imagePath); // delete unsafe image
+      return res.status(400).json({
+        error: "Inappropriate or harmful image detected. Upload rejected.",
+      });
     }
 
     const cleanDescription = sanitizeHTML(req.body.description, {
@@ -26,18 +38,16 @@ const addProducts = async (req, res) => {
       allowedAttributes: {},
     });
 
-    // Create a new product with image URL
     const newProduct = new products({
       name: req.body.name,
       description: cleanDescription,
       price: req.body.price,
       stock: req.body.stock,
       category: req.body.category,
-      imageUrl: `/uploads/${req.file.filename}`, // Save the uploaded image path
+      imageUrl: `/uploads/${req.file.filename}`,
       seller: req.user.id,
     });
 
-    // Save to database
     await newProduct.save();
     res.status(201).json(newProduct);
   } catch (error) {
@@ -61,7 +71,7 @@ const getProduct = async (req, res) => {
     if (!product) {
       return res
         .status(404)
-        .json({ msg: `No Data found with id: {productID}` });
+        .json({ msg: `No Data found with id: ${productID}` });
     }
     return res.status(200).json(product);
   } catch (error) {
@@ -83,12 +93,24 @@ const updateProduct = async (req, res) => {
       return res.status(403).json({ error: "Not authorized" });
     }
 
+    // 🔐 IMAGE MODERATION (only if a new image was uploaded)
+    if (req.file) {
+      const imagePath = req.file.path;
+      const safe = await isImageSafe(imagePath);
+
+      if (!safe) {
+        fs.unlinkSync(imagePath); // delete unsafe image
+        return res.status(400).json({
+          error: "Inappropriate or harmful image detected. Upload rejected.",
+        });
+      }
+
+      product.imageUrl = `/uploads/${req.file.filename}`;
+    }
+
     if (req.body.name !== undefined) product.name = req.body.name;
-
     if (req.body.price !== undefined) product.price = Number(req.body.price);
-
     if (req.body.stock !== undefined) product.stock = Number(req.body.stock);
-
     if (req.body.category !== undefined) product.category = req.body.category;
 
     if (req.body.description) {
@@ -109,10 +131,6 @@ const updateProduct = async (req, res) => {
         ],
         allowedAttributes: {},
       });
-    }
-
-    if (req.file) {
-      product.imageUrl = `/uploads/${req.file.filename}`;
     }
 
     await product.save();

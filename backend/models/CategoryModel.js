@@ -11,7 +11,6 @@ const CategorySchema = new mongoose.Schema({
   },
   discount: {
     type: String,
-    required: [true, "Discount information is required"],
     default: "0% off",
   },
 });

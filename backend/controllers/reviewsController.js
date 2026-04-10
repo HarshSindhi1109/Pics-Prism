@@ -5,9 +5,7 @@ const isImageSafe = require("../utils/imageModeration");
 
 const updateProductRatings = async (productId) => {
   const reviews = await Review.find({ product: productId });
-
   const numOfReviews = reviews.length;
-
   const ratings =
     numOfReviews === 0
       ? 0
@@ -19,12 +17,22 @@ const updateProductRatings = async (productId) => {
   });
 };
 
+// ✅ Helper — safely delete uploaded file without crashing if it's already gone
+const safeUnlink = (filePath) => {
+  try {
+    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  } catch (e) {
+    console.error("Failed to delete file:", filePath, e.message);
+  }
+};
+
 const addReview = async (req, res) => {
   try {
     const userId = req.user._id;
     const { review, rating, product } = req.body;
 
     if (!product) {
+      safeUnlink(req.file?.path);
       return res
         .status(400)
         .json({ success: false, error: "Product is required" });
@@ -32,31 +40,43 @@ const addReview = async (req, res) => {
 
     const existingReview = await Review.findOne({ user: userId, product });
     if (existingReview) {
+      safeUnlink(req.file?.path);
       return res
         .status(400)
         .json({ message: "You have already reviewed this product" });
     }
 
     const ratingValue = parseFloat(rating);
-
     if (
       isNaN(ratingValue) ||
       ratingValue < 0.5 ||
       ratingValue > 5 ||
       !Number.isInteger(ratingValue * 2)
     ) {
+      safeUnlink(req.file?.path);
       return res.status(400).json({
         success: false,
         error: "Rating must be between 0.5 and 5 in steps of 0.5",
       });
     }
 
+    // 🔐 IMAGE MODERATION
     if (req.file) {
-      const imagePath = req.file.path;
-      const safe = await isImageSafe(imagePath);
+      let safe = false;
+      try {
+        safe = await isImageSafe(req.file.path);
+      } catch (moderationErr) {
+        // Moderation service itself crashed — reject the upload safely
+        console.error("Image moderation error:", moderationErr.message);
+        safeUnlink(req.file.path);
+        return res.status(500).json({
+          success: false,
+          error: "Internal Server Error",
+        });
+      }
 
       if (!safe) {
-        fs.unlinkSync(imagePath); // delete unsafe image
+        safeUnlink(req.file.path);
         return res.status(400).json({
           success: false,
           error: "Inappropriate image detected. Upload rejected.",
@@ -79,8 +99,10 @@ const addReview = async (req, res) => {
 
     res.status(201).json({ success: true, review: newReview });
   } catch (error) {
+    // ✅ Catch-all — server will NEVER crash, always returns 500 to frontend
     console.error("Add review error:", error);
-    res.status(500).json({ success: false, error: error.message });
+    safeUnlink(req.file?.path);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -90,15 +112,10 @@ const getMyReviews = async (req, res) => {
       .populate("product", "name")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      reviews,
-    });
+    res.status(200).json({ success: true, reviews });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Get my reviews error:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -111,7 +128,7 @@ const getReviews = async (req, res) => {
           from: "products",
           localField: "product",
           foreignField: "_id",
-          as: "productInfo", // Change to a different name to avoid conflict
+          as: "productInfo",
         },
       },
       {
@@ -130,33 +147,24 @@ const getReviews = async (req, res) => {
           imageUrl: 1,
           createdAt: 1,
           product: {
-            // Keep the original product ID reference
             _id: "$product",
-            name: "$productInfo.name", // Get name from productInfo
+            name: "$productInfo.name",
           },
         },
       },
     ]);
 
-    res.status(200).json({
-      success: true,
-      reviews,
-    });
+    res.status(200).json({ success: true, reviews });
   } catch (error) {
-    console.error("Error fetching reviews:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Get reviews error:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const getSellerProductReviews = async (req, res) => {
   try {
     const sellerId = req.user._id;
-
     const products = await Product.find({ seller: sellerId }).select("_id");
-
     const productIds = products.map((p) => p._id);
 
     const rawReviews = await Review.find({ product: { $in: productIds } })
@@ -169,123 +177,108 @@ const getSellerProductReviews = async (req, res) => {
       displayName: r.user?.name || r.name || "Anonymous User",
     }));
 
-    res.status(200).json({
-      success: true,
-      reviews,
-    });
+    res.status(200).json({ success: true, reviews });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Get seller reviews error:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const getReview = async (req, res) => {
   try {
-    const reviewID = req.params.id;
-
-    const review = await Review.findById(reviewID);
-
+    const review = await Review.findById(req.params.id);
     if (!review) {
-      return res.status(404).json({
-        success: false,
-        msg: `No review found with id: ${reviewID}`,
-      });
+      return res
+        .status(404)
+        .json({
+          success: false,
+          msg: `No review found with id: ${req.params.id}`,
+        });
     }
-
-    res.status(200).json({
-      success: true,
-      review,
-    });
+    res.status(200).json({ success: true, review });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Get review error:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const updateReview = async (req, res) => {
   try {
-    const reviewID = req.params.id;
-    const { review, rating } = req.body;
-
-    const existingReview = await Review.findById(reviewID);
+    const existingReview = await Review.findById(req.params.id);
 
     if (!existingReview) {
-      return res.status(404).json({
-        success: false,
-        msg: "Review not found",
-      });
+      safeUnlink(req.file?.path);
+      return res
+        .status(404)
+        .json({ success: false, error: "Review not found" });
     }
 
     // ✅ Optional rating validation
-    if (rating !== undefined) {
-      const ratingValue = parseFloat(rating);
-
+    if (req.body.rating !== undefined) {
+      const ratingValue = parseFloat(req.body.rating);
       if (
         isNaN(ratingValue) ||
         ratingValue < 0.5 ||
         ratingValue > 5 ||
         !Number.isInteger(ratingValue * 2)
       ) {
+        safeUnlink(req.file?.path);
         return res.status(400).json({
           success: false,
           error: "Rating must be between 0.5 and 5 in steps of 0.5",
         });
       }
-
       existingReview.rating = ratingValue;
     }
 
-    if (review !== undefined) {
-      existingReview.review = review;
+    if (req.body.review !== undefined) {
+      existingReview.review = req.body.review;
     }
 
+    // 🔐 IMAGE MODERATION on update
     if (req.file) {
-      existingReview.imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    }
-
-    if (req.file) {
-      const imagePath = req.file.path;
-      const safe = await isImageSafe(imagePath);
+      let safe = false;
+      try {
+        safe = await isImageSafe(req.file.path);
+      } catch (moderationErr) {
+        console.error("Image moderation error:", moderationErr.message);
+        safeUnlink(req.file.path);
+        return res.status(500).json({
+          success: false,
+          error: "Internal Server Error",
+        });
+      }
 
       if (!safe) {
-        fs.unlinkSync(imagePath); // delete unsafe image
+        safeUnlink(req.file.path);
         return res.status(400).json({
           success: false,
           error: "Inappropriate image detected. Upload rejected.",
         });
       }
+
+      existingReview.imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
     }
 
     await existingReview.save();
-
     await updateProductRatings(existingReview.product);
 
-    res.status(200).json({
-      success: true,
-      review: existingReview,
-    });
+    res.status(200).json({ success: true, review: existingReview });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Update review error:", error);
+    safeUnlink(req.file?.path);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const deleteReview = async (req, res) => {
   try {
-    const reviewID = req.params.id;
-
-    const deletedReview = await Review.findByIdAndDelete(reviewID);
+    const deletedReview = await Review.findByIdAndDelete(req.params.id);
 
     if (!deletedReview) {
       return res.status(404).json({
         success: false,
-        msg: `No review found with id: ${reviewID}`,
+        msg: `No review found with id: ${req.params.id}`,
       });
     }
 
@@ -297,10 +290,8 @@ const deleteReview = async (req, res) => {
       deletedReview,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Delete review error:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 

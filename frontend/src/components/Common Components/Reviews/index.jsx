@@ -14,11 +14,12 @@ export default function Reviews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ NEW
 
-  const [products, setProducts] = useState([]);
+  // Only products from delivered orders
+  const [deliveredProducts, setDeliveredProducts] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Track products already reviewed by logged-in user
   const [reviewedProducts, setReviewedProducts] = useState({});
 
   const [newReview, setNewReview] = useState({
@@ -40,28 +41,34 @@ export default function Reviews() {
   const token = localStorage.getItem('token');
   const decoded = token ? jwtDecode(token) : null;
   const dropdownRef = useRef();
-  const userId = decoded?.id; // must exist after login
-  const isLoggedIn = !!localStorage.getItem('token');
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const userId = decoded?.id;
+  const isLoggedIn = !!token;
 
   useEffect(() => {
     fetchReviews();
     if (userId) {
       fetchMyReviews();
+      fetchDeliveredProducts();
     }
   }, [userId]);
 
-  // FETCH REVIEWS
+  // Dropdown outside click close
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const fetchReviews = async () => {
     try {
       const res = await fetch(`http://localhost:5000/api/reviews`);
       const data = await res.json();
       setReviews(data.reviews || []);
 
-      // Build map of products reviewed by this user
       const reviewedMap = {};
       data.reviews.forEach((r) => {
         if (r.user?.toString() === userId) {
@@ -76,44 +83,47 @@ export default function Reviews() {
     }
   };
 
-  // FETCH PRODUCTS
-  const fetchProducts = async () => {
+  const fetchDeliveredProducts = async () => {
+    if (!token) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/products`);
-      const data = await res.json();
-      setProducts(Array.isArray(data) ? data : data.products || []);
+      const res = await fetch('http://localhost:5000/api/orders/user', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const orders = await res.json();
+
+      const seen = new Set();
+      const products = [];
+
+      orders
+        .filter((order) => order.status === 'Delivered')
+        .forEach((order) => {
+          order.products.forEach((p) => {
+            const id = p.productId?.toString();
+            if (id && !seen.has(id)) {
+              seen.add(id);
+              products.push({ _id: id, name: p.name, imageUrl: p.imageUrl });
+            }
+          });
+        });
+
+      setDeliveredProducts(products);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch delivered products', err);
     }
   };
 
   const fetchMyReviews = async () => {
     if (!token) return;
-
     try {
       const res = await fetch('http://localhost:5000/api/reviews/my', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
       setMyReviews(data.reviews || []);
     } catch (err) {
       console.error(err);
     }
   };
-
-  // Dropdown outside click close
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -137,44 +147,50 @@ export default function Reviews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!newReview.product) {
-      return alert('Please select a product');
-    }
-
-    if (reviewedProducts[newReview.product]) {
+    if (!newReview.product) return alert('Please select a product');
+    if (reviewedProducts[newReview.product])
       return alert('You have already reviewed this product');
-    }
+
+    setIsSubmitting(true); // ✅ disable button
+    setSubmitError(null);
 
     try {
-      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('review', newReview.review);
       formData.append('rating', newReview.rating);
       formData.append('product', newReview.product);
-      if (newReview.imageFile) {
+      if (newReview.imageFile)
         formData.append('imageFile', newReview.imageFile);
-      }
 
       const res = await fetch(`http://localhost:5000/api/reviews`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error || 'Failed to submit review');
+        // ✅ Show whatever the backend sends back — validation, image rejection, or 500
+        setSubmitError(
+          res.status === 500
+            ? 'Internal Server Error. Please try again later.'
+            : data.error || 'Failed to submit review'
+        );
         return;
       }
 
       setSubmitError(null);
       setNewReview({ review: '', rating: 0, product: null, imageFile: null });
       fetchReviews();
+      fetchMyReviews();
     } catch (err) {
-      setError(err.message);
+      // ✅ Network-level failure (server completely down, no response)
+      setSubmitError(
+        'Could not reach the server. Please check your connection.'
+      );
+    } finally {
+      setIsSubmitting(false); // ✅ always re-enable button
     }
   };
 
@@ -183,44 +199,51 @@ export default function Reviews() {
       const formData = new FormData();
       formData.append('review', editReviewData.review);
       formData.append('rating', editReviewData.rating);
-
-      if (editReviewData.imageFile) {
+      if (editReviewData.imageFile)
         formData.append('imageFile', editReviewData.imageFile);
-      }
 
       const res = await fetch(`http://localhost:5000/api/reviews/${id}`, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
-      if (!res.ok) throw new Error('Failed to update review');
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(
+          res.status === 500
+            ? 'Internal Server Error. Please try again later.'
+            : data.error || 'Failed to update review'
+        );
+        return;
+      }
 
       setEditingReviewId(null);
       fetchMyReviews();
       fetchReviews();
     } catch (err) {
-      console.error(err);
+      alert('Could not reach the server. Please check your connection.');
     }
   };
 
   const handleDeleteReview = async (id) => {
     if (!window.confirm('Delete this review?')) return;
-
     try {
-      await fetch(`http://localhost:5000/api/reviews/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/reviews/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!res.ok) {
+        alert('Failed to delete review. Please try again.');
+        return;
+      }
 
       fetchMyReviews();
       fetchReviews();
     } catch (err) {
-      console.error(err);
+      alert('Could not reach the server. Please check your connection.');
     }
   };
 
@@ -229,6 +252,14 @@ export default function Reviews() {
   const alreadyReviewed = newReview.product
     ? reviewedProducts[newReview.product]
     : false;
+
+  const reviewableProducts = deliveredProducts.filter(
+    (p) => !reviewedProducts[p._id]
+  );
+
+  // ✅ Button is disabled if: already reviewed, no products, OR currently submitting
+  const isButtonDisabled =
+    alreadyReviewed || reviewableProducts.length === 0 || isSubmitting;
 
   return (
     <section className="reviews">
@@ -260,12 +291,9 @@ export default function Reviews() {
                     className="review-image"
                   />
                 )}
-
                 <p className="product-name">{review.product?.name}</p>
-
                 <p className="review-text">{review.review}</p>
                 <h3>{review.name}</h3>
-
                 <div className="review-stars">
                   {[1, 2, 3, 4, 5].map((i) =>
                     review.rating >= i ? (
@@ -293,16 +321,27 @@ export default function Reviews() {
           >
             <div
               className="dropdown-selected"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => {
+                if (reviewableProducts.length > 0)
+                  setDropdownOpen(!dropdownOpen);
+              }}
+              style={{
+                cursor:
+                  reviewableProducts.length === 0 ? 'not-allowed' : 'pointer',
+                opacity: reviewableProducts.length === 0 ? 0.6 : 1,
+              }}
             >
               {newReview.product
-                ? products.find((p) => p._id === newReview.product)?.name
-                : 'Select Product'}
+                ? deliveredProducts.find((p) => p._id === newReview.product)
+                    ?.name
+                : reviewableProducts.length === 0
+                ? 'No delivered products to review'
+                : 'Select a delivered product'}
               <span style={{ marginLeft: 'auto' }}>▼</span>
             </div>
 
             <ul className="dropdown-list">
-              {products.map((p) => (
+              {reviewableProducts.map((p) => (
                 <li key={p._id} onClick={() => handleProductSelect(p._id)}>
                   {p.name}
                 </li>
@@ -311,7 +350,7 @@ export default function Reviews() {
           </div>
 
           {alreadyReviewed && (
-            <p className="error-text" style={{ color: 'red' }}>
+            <p className="error-text">
               You have already reviewed this product.
             </p>
           )}
@@ -322,7 +361,7 @@ export default function Reviews() {
             onChange={handleInputChange}
             placeholder="Write your review"
             required
-            disabled={alreadyReviewed}
+            disabled={isButtonDisabled}
           />
 
           <div className="stars-rating">
@@ -336,7 +375,7 @@ export default function Reviews() {
               max="5"
               step="0.5"
               required
-              disabled={alreadyReviewed}
+              disabled={isButtonDisabled}
             />
           </div>
 
@@ -344,28 +383,31 @@ export default function Reviews() {
             type="file"
             onChange={handleFileChange}
             accept="image/*"
-            disabled={alreadyReviewed}
+            disabled={isButtonDisabled}
           />
 
+          {/* ✅ Error shown here — covers both validation and server errors */}
           {submitError && (
-            <p
-              className="error-text"
-              style={{ color: 'red', marginBottom: '10px' }}
-            >
+            <p className="error-text" style={{ marginBottom: '10px' }}>
               {submitError}
             </p>
           )}
 
-          <button type="submit" className="btn" disabled={alreadyReviewed}>
-            Submit Review
+          <button
+            type="submit"
+            className="btn"
+            disabled={isButtonDisabled}
+            style={{ opacity: isButtonDisabled ? 0.7 : 1 }}
+          >
+            {isSubmitting ? 'Submitting Review...' : 'Submit Review'}
           </button>
         </form>
       )}
 
+      {/* My Reviews Table */}
       {isLoggedIn && myReviews.length > 0 && (
         <div className="my-reviews-section">
           <h2 className="my-reviews-heading">My Reviews</h2>
-
           <table className="my-reviews-table">
             <thead>
               <tr>
@@ -376,7 +418,6 @@ export default function Reviews() {
                 <th>Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {myReviews.map((review) => (
                 <tr key={review._id}>
@@ -395,7 +436,6 @@ export default function Reviews() {
                             }}
                           />
                         )}
-
                         <input
                           type="file"
                           accept="image/*"
@@ -468,7 +508,7 @@ export default function Reviews() {
                     {editingReviewId === review._id ? (
                       <>
                         <button
-                          className="review-save-btn" // Changed from "btn" to "save-btn"
+                          className="review-save-btn"
                           onClick={() => handleUpdateReview(review._id)}
                         >
                           Save
@@ -496,7 +536,6 @@ export default function Reviews() {
                         >
                           Edit
                         </button>
-
                         <button
                           className="review-delete-btn"
                           onClick={() => handleDeleteReview(review._id)}

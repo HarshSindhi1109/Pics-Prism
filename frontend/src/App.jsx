@@ -25,7 +25,6 @@ import OrderStatus from './pages/User Pages/OrderStatus';
 import ReviewPage from './pages/User Pages/ReviewPage';
 import CartPage from './pages/User Pages/Cart';
 import CheckoutPage from './pages/User Pages/Checkout';
-import BlogPage from './pages/User Pages/BlogPage';
 import WishlistPage from './pages/User Pages/WishlistPage';
 import PaymentMethodsPage from './pages/User Pages/PaymentMethodsPage';
 import ShippingInfoPage from './pages/User Pages/ShippingInfoPage';
@@ -59,7 +58,6 @@ import AddProduct from './pages/Admin Pages/AddProducts';
 import AddVendorUsersPage from './pages/Admin Pages/AddVendorUsersPage';
 import UsersManagement from './pages/Admin Pages/UserManagementPage';
 import CategoryManagementPage from './pages/Admin Pages/CategoryManagementPage';
-import ManageBlogsPage from './pages/Admin Pages/Blogs';
 import AdminFAQPage from './pages/Admin Pages/FAQPage';
 import AdminPaymentMethodsPage from './pages/Admin Pages/PaymentMethodsPage';
 import AdminReturnsExchange from './pages/Admin Pages/ReturnsExchange';
@@ -243,14 +241,6 @@ const App = () => {
           element={
             <ProtectedRoute allowedRoles={['buyer']}>
               <CheckoutPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/buyer-home/blogs"
-          element={
-            <ProtectedRoute allowedRoles={['buyer']}>
-              <BlogPage />
             </ProtectedRoute>
           }
         />
@@ -503,14 +493,6 @@ const App = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminSecurityPolicyPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin-home/manage-blogs"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <ManageBlogsPage />
             </ProtectedRoute>
           }
         />

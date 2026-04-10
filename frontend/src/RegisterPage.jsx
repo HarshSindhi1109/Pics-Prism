@@ -10,34 +10,31 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const role = 'Buyer';
+  const role = 'buyer';
 
-  // Load saved form data when coming back from OTP page
+  // Restore form data if user navigates back from OTP page
   useEffect(() => {
     const savedFormData = localStorage.getItem('registerFormData');
     if (savedFormData) {
       const {
-        name: savedName,
-        email: savedEmail,
-        password: savedPassword,
-        confirmPassword: savedConfirmPassword,
+        name: n,
+        email: e,
+        password: p,
+        confirmPassword: cp,
       } = JSON.parse(savedFormData);
-      setName(savedName || '');
-      setEmail(savedEmail || '');
-      setPassword(savedPassword || '');
-      setConfirmPassword(savedConfirmPassword || '');
-      localStorage.removeItem('registerFormData'); // Clear after loading
+      setName(n || '');
+      setEmail(e || '');
+      setPassword(p || '');
+      setConfirmPassword(cp || '');
+      localStorage.removeItem('registerFormData');
     }
   }, []);
 
-  /* ================= PASSWORD RULES ================= */
   const passwordRules = {
     length: password.length >= 8,
     uppercase: /[A-Z]/.test(password),
@@ -48,7 +45,6 @@ const RegisterPage = () => {
 
   const isPasswordValid = Object.values(passwordRules).every(Boolean);
 
-  /* ================= VALIDATION ================= */
   const namePattern = /^[A-Za-z\s]+$/;
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,42 +52,49 @@ const RegisterPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!namePattern.test(name)) return alert('Invalid name');
-    if (!emailPattern.test(email)) return alert('Invalid email');
-    if (!isPasswordValid) return alert('Weak password');
-    if (password !== confirmPassword) return alert('Passwords do not match');
+    if (!namePattern.test(name)) {
+      alert('Name can only contain letters and spaces');
+      setLoading(false);
+      return;
+    }
+    if (!emailPattern.test(email)) {
+      alert('Invalid email address');
+      setLoading(false);
+      return;
+    }
+    if (!isPasswordValid) {
+      alert('Password does not meet all requirements');
+      setLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      setLoading(false);
+      return;
+    }
 
     try {
       // Save form data in case user goes back from OTP page
       localStorage.setItem(
         'registerFormData',
-        JSON.stringify({
-          name,
-          email,
-          password,
-          confirmPassword,
-        })
+        JSON.stringify({ name, email, password, confirmPassword })
       );
 
-      // 🔹 SEND OTP ONLY
+      // Send OTP to email for verification
       const res = await fetch('http://localhost:5000/api/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          purpose: 'register',
-        }),
+        body: JSON.stringify({ email, purpose: 'register' }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      // 🔹 TEMP STORE USER DATA
+      // Temporarily store user data until OTP is verified
       localStorage.setItem(
         'tempUser',
         JSON.stringify({ name, email, password, role })
       );
-
       localStorage.setItem('otpEmail', email);
       localStorage.setItem('otpPurpose', 'register');
       localStorage.setItem('otpExpiry', data.expiresAt);
@@ -110,15 +113,12 @@ const RegisterPage = () => {
       const res = await fetch('http://localhost:5000/api/google-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: credentialResponse.credential,
-        }),
+        body: JSON.stringify({ token: credentialResponse.credential }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      // Store auth data
       localStorage.setItem('token', data.token);
       localStorage.setItem('userId', data.user.id);
       localStorage.setItem('userName', data.user.name);
@@ -130,11 +130,9 @@ const RegisterPage = () => {
         data.user.profilePicUrl || '/uploads/profile-pic.webp'
       );
 
-      // Clear any temp register data
       localStorage.removeItem('registerFormData');
       localStorage.removeItem('tempUser');
 
-      // Redirect buyer
       navigate('/buyer-home');
     } catch (err) {
       alert(err.message);
@@ -152,10 +150,11 @@ const RegisterPage = () => {
           type="text"
           value={name}
           onChange={(e) => {
-            const value = e.target.value;
-            if (value === '' || namePattern.test(value)) setName(value);
+            const v = e.target.value;
+            if (v === '' || namePattern.test(v)) setName(v);
           }}
           required
+          placeholder="Enter your full name"
         />
 
         {/* Email */}
@@ -169,6 +168,7 @@ const RegisterPage = () => {
           autoCapitalize="none"
           autoCorrect="off"
           style={{ textTransform: 'none' }}
+          placeholder="Enter your email"
         />
 
         {/* Password */}
@@ -179,6 +179,7 @@ const RegisterPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            placeholder="Create a password"
           />
           <span
             className="eye-icon"
@@ -188,14 +189,15 @@ const RegisterPage = () => {
           </span>
         </div>
 
-        {/* Password Criteria */}
         {password && (
           <ul className="password-criteria">
             {!passwordRules.length && <li>Minimum 8 characters</li>}
             {!passwordRules.uppercase && <li>At least one uppercase letter</li>}
             {!passwordRules.lowercase && <li>At least one lowercase letter</li>}
             {!passwordRules.number && <li>At least one number</li>}
-            {!passwordRules.special && <li>At least one special character</li>}
+            {!passwordRules.special && (
+              <li>At least one special character (@$!%*?&#)</li>
+            )}
           </ul>
         )}
 
@@ -207,6 +209,7 @@ const RegisterPage = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            placeholder="Confirm your password"
           />
           <span
             className="eye-icon"
@@ -219,22 +222,21 @@ const RegisterPage = () => {
         {confirmPassword && password !== confirmPassword && (
           <p className="password-error">Passwords do not match</p>
         )}
+
         <br />
         <button type="submit" disabled={loading}>
           {loading ? 'Sending OTP...' : 'Register'}
         </button>
 
         <p style={{ marginTop: '20px' }}>
-          I have an account
+          Already have an account?
           <Link to="/login"> Login Here</Link>
         </p>
 
-        {/* OR Divider */}
         <div className="or-divider">
           <span>OR</span>
         </div>
 
-        {/* Google Sign Up */}
         <div className="google-login-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}

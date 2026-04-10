@@ -1,6 +1,19 @@
 const Order = require("../models/Order");
 const Product = require("../models/ProductsModel");
 const Coupon = require("../models/Coupon");
+const razorpay = require("../utils/razorpay");
+
+// ✅ Valid status transitions map
+const ALLOWED_TRANSITIONS = {
+  Pending: ["Processing", "Cancelled"],
+  Processing: ["Shipped", "Cancelled"],
+  Shipped: ["Delivered"],
+  Delivered: [],
+  Cancelled: [],
+};
+
+// Statuses from which cancellation triggers a refund + stock restore
+const REFUNDABLE_STATUSES = ["Pending", "Processing"];
 
 // ✅ Create a new order
 const createOrder = async (req, res) => {
@@ -87,7 +100,7 @@ const createOrder = async (req, res) => {
     const newOrder = await Order.create({
       user: req.user._id,
       products: orderProducts,
-      amount: totalAmount, // use frontend totalAmount including coupon
+      amount: totalAmount,
       transactionId: paymentId,
       coupon: orderCoupon,
       status: "Processing",
@@ -140,7 +153,7 @@ const getOrders = async (req, res) => {
             createdAt: order.createdAt,
           };
         })
-        .filter(Boolean); // remove null orders
+        .filter(Boolean);
     }
 
     // 🛡️ ADMIN GETS EVERYTHING
@@ -148,7 +161,7 @@ const getOrders = async (req, res) => {
       orders = orders.map((order) => ({
         _id: order._id,
         products: order.products
-          .filter((p) => p.productId) // 🔥 remove deleted products
+          .filter((p) => p.productId)
           .map((p) => ({
             productId: p.productId._id,
             name: p.productId.name,
@@ -188,7 +201,7 @@ const getOrderById = async (req, res) => {
 // Get orders by user ID
 const getOrdersByUser = async (req, res) => {
   try {
-    if (!req.user?._id) return res.status(200).json([]); // no user
+    if (!req.user?._id) return res.status(200).json([]);
 
     const userId = req.user._id;
 
@@ -217,14 +230,14 @@ const getOrdersByUser = async (req, res) => {
       createdAt: order.createdAt,
     }));
 
-    res.status(200).json(formattedOrders); // always array
+    res.status(200).json(formattedOrders);
   } catch (error) {
     console.error(error);
-    res.status(200).json([]); // fallback to empty array instead of 500
+    res.status(200).json([]);
   }
 };
 
-// ✅ Update order status
+// ✅ Update order status (with refund + stock restore on cancellation)
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -248,6 +261,56 @@ const updateOrderStatus = async (req, res) => {
         return res.status(403).json({
           message: "Not authorized to update this order",
         });
+      }
+    }
+
+    // 🚦 STATUS TRANSITION VALIDATION
+    const allowedNext = ALLOWED_TRANSITIONS[order.status];
+
+    if (!allowedNext) {
+      return res.status(400).json({
+        message: `Unknown current status: ${order.status}`,
+      });
+    }
+
+    if (!allowedNext.includes(status)) {
+      return res.status(400).json({
+        message:
+          allowedNext.length === 0
+            ? `Order is already in a final state (${order.status}) and cannot be updated.`
+            : `Invalid status transition from "${order.status}" to "${status}". Allowed: ${allowedNext.join(", ")}.`,
+      });
+    }
+
+    // 💰 CANCELLATION: refund + stock restore
+    if (status === "Cancelled" && REFUNDABLE_STATUSES.includes(order.status)) {
+      // 🔄 STEP 1: Restore stock for every product in the order
+      for (const item of order.products) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { stock: +item.quantity },
+        });
+      }
+
+      // 💸 STEP 2: Trigger Razorpay refund using the stored payment ID
+      if (order.transactionId) {
+        try {
+          await razorpay.payments.refund(order.transactionId, {
+            amount: Math.round(order.amount * 100), // paise
+            speed: "normal", // "normal" (5-7 days) or "optimum" (instant, higher fee)
+            notes: {
+              reason: "Order cancelled by user/seller",
+              orderId: order._id.toString(),
+            },
+          });
+        } catch (refundError) {
+          // Log the refund failure but don't block the cancellation —
+          // the order status will still be set to Cancelled so ops can
+          // handle manual refund if Razorpay rejects (e.g. already refunded).
+          console.error(
+            `Razorpay refund failed for order ${order._id}:`,
+            refundError.message,
+          );
+        }
       }
     }
 

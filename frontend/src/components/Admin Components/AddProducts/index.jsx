@@ -12,8 +12,10 @@ export default function Products() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [formError, setFormError] = useState(''); // ← moderation error message
+  const [submitting, setSubmitting] = useState(false); // ← prevent double submit
 
-  const ITEMS_PER_PAGE = 10; // Total Items Displayed at one page of pagination
+  const ITEMS_PER_PAGE = 10;
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -28,7 +30,6 @@ export default function Products() {
 
   const location = useLocation();
 
-  // 🔹 Fetch products & categories
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -37,7 +38,6 @@ export default function Products() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('token');
-
       const res = await fetch('http://localhost:5000/api/products/my', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -62,9 +62,7 @@ export default function Products() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch categories');
-      }
+      if (!res.ok) throw new Error('Failed to fetch categories');
 
       const data = await res.json();
       setCategories(data);
@@ -78,17 +76,13 @@ export default function Products() {
       const productToEdit = products.find(
         (p) => p._id === location.state.productId
       );
-
-      if (productToEdit) {
-        handleEditProduct(productToEdit);
-      }
+      if (productToEdit) handleEditProduct(productToEdit);
     }
   }, [location.state, products]);
 
-  // 🔹 Handle input change
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
-
+    setFormError(''); // clear error on any change
     if (type === 'file') {
       setNewProduct({ ...newProduct, image: files[0] });
     } else {
@@ -96,9 +90,10 @@ export default function Products() {
     }
   };
 
-  // 🔹 Add / Update Product
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();
+    setFormError('');
+    setSubmitting(true);
 
     try {
       const formData = new FormData();
@@ -122,23 +117,26 @@ export default function Products() {
         body: formData,
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Failed to save product');
-      }
+      const data = await response.json();
 
-      const savedProduct = await response.json();
+      if (!response.ok) {
+        // 🔴 Show moderation / validation error inline instead of alert
+        setFormError(data.error || 'Failed to save product');
+        return;
+      }
 
       setProducts((prev) =>
         editingProduct
-          ? prev.map((p) => (p._id === savedProduct._id ? savedProduct : p))
-          : [...prev, savedProduct]
+          ? prev.map((p) => (p._id === data._id ? data : p))
+          : [...prev, data]
       );
 
       resetForm();
       alert(editingProduct ? 'Product updated!' : 'Product added!');
     } catch (error) {
-      alert(error.message);
+      setFormError(error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -147,43 +145,35 @@ export default function Products() {
 
     try {
       const token = localStorage.getItem('token');
-
       const response = await fetch(`http://localhost:5000/api/products/${id}`, {
         method: 'DELETE',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
       if (!response.ok) throw new Error('Delete failed');
-
       setProducts(products.filter((p) => p._id !== id));
     } catch (error) {
       alert(error.message);
     }
   };
 
-  // 🔹 Edit Product (FIXED)
   const handleEditProduct = (product) => {
     setEditingProduct(product);
-
+    setFormError('');
     setNewProduct({
       name: product.name ?? '',
       description: product.description ?? '',
       price: product.price?.toString() ?? '',
       stock: product.stock?.toString() ?? '',
       category: product.category?.toString() ?? '',
-      image: null, // cannot prefill
+      image: null,
     });
-
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 🔹 Cancel Edit
-  // const handleCancelEdit = () => {
-  //   resetForm();
-  // };
-
   const resetForm = () => {
     setEditingProduct(null);
+    setFormError('');
     setNewProduct({
       name: '',
       description: '',
@@ -196,11 +186,9 @@ export default function Products() {
 
   const filteredProducts = products.filter((product) => {
     const productName = product.name.toLowerCase();
-
     const categoryName =
       categories.find((c) => c._id === product.category)?.name.toLowerCase() ||
       '';
-
     return (
       productName.includes(searchTerm.toLowerCase()) ||
       categoryName.includes(searchTerm.toLowerCase())
@@ -212,11 +200,11 @@ export default function Products() {
   }, [searchTerm]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-
-  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+  const paginatedProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   return (
     <section className="products" id="products">
@@ -224,7 +212,7 @@ export default function Products() {
         Manage <span>Products</span>
       </h1>
 
-      {/* 🔹 Add / Edit Form */}
+      {/* Add / Edit Form */}
       <form onSubmit={handleAddOrUpdateProduct} className="add-product-form">
         <input
           type="text"
@@ -239,12 +227,10 @@ export default function Products() {
           <ReactQuill
             theme="snow"
             value={newProduct.description}
-            onChange={(value) =>
-              setNewProduct((prev) => ({
-                ...prev,
-                description: value,
-              }))
-            }
+            onChange={(value) => {
+              setFormError('');
+              setNewProduct((prev) => ({ ...prev, description: value }));
+            }}
             placeholder="Write product description here..."
           />
         </div>
@@ -253,6 +239,7 @@ export default function Products() {
           type="number"
           name="price"
           placeholder="Price"
+          min={0}
           value={newProduct.price}
           onChange={handleInputChange}
           required
@@ -264,6 +251,23 @@ export default function Products() {
           onChange={handleInputChange}
           required={!editingProduct}
         />
+
+        {/* 🔴 Inline moderation / error message */}
+        {formError && (
+          <p
+            style={{
+              color: '#b91c1c',
+              background: '#fee2e2',
+              border: '1px solid #fca5a5',
+              borderRadius: '0.6rem',
+              padding: '0.8rem 1rem',
+              fontSize: '1.3rem',
+              margin: '0.5rem 0',
+            }}
+          >
+            ⚠️ {formError}
+          </p>
+        )}
 
         <div
           className={`custom-select ${dropdownOpen ? 'open' : ''}`}
@@ -280,16 +284,12 @@ export default function Products() {
               {categories.length === 0 && (
                 <li className="option disabled">No categories</li>
               )}
-
               {categories.map((cat) => (
                 <li
                   key={cat._id}
                   className="option"
                   onClick={() => {
-                    setNewProduct((prev) => ({
-                      ...prev,
-                      category: cat._id,
-                    }));
+                    setNewProduct((prev) => ({ ...prev, category: cat._id }));
                     setDropdownOpen(false);
                   }}
                 >
@@ -311,25 +311,19 @@ export default function Products() {
         />
 
         <div className="form-actions">
-          <button type="submit" className="btn">
-            {editingProduct ? 'Update Product' : 'Add Product'}
+          <button type="submit" className="btn" disabled={submitting}>
+            {submitting
+              ? 'Checking image...'
+              : editingProduct
+              ? 'Update Product'
+              : 'Add Product'}
           </button>
 
           {editingProduct && (
             <button
               type="button"
               className="cancel-change-btn"
-              onClick={() => {
-                setEditingProduct(null);
-                setNewProduct({
-                  name: '',
-                  description: '',
-                  price: '',
-                  image: null,
-                  category: '',
-                  stock: '',
-                });
-              }}
+              onClick={resetForm}
             >
               Cancel
             </button>
@@ -337,7 +331,7 @@ export default function Products() {
         </div>
       </form>
 
-      {/* 🔍 Search Bar */}
+      {/* Search Bar */}
       <div className="table-search">
         <input
           type="text"
@@ -366,7 +360,7 @@ export default function Products() {
             </thead>
 
             <tbody>
-              {filteredProducts.length === 0 ? (
+              {paginatedProducts.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="no-data">
                     No Products Found
@@ -382,16 +376,12 @@ export default function Products() {
                         className="table-image"
                       />
                     </td>
-
                     <td>{product.name}</td>
-
                     <td className="price">₹ {product.price}</td>
-
                     <td>
                       {categories.find((c) => c._id === product.category)
                         ?.name || 'Unknown'}
                     </td>
-
                     <td>
                       <span
                         className={`stock ${
@@ -401,7 +391,6 @@ export default function Products() {
                         {product.stock}
                       </span>
                     </td>
-
                     <td className="product-actions">
                       <button
                         className="edit-btn"
@@ -409,7 +398,6 @@ export default function Products() {
                       >
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
-
                       <button
                         className="delete-btn"
                         onClick={() => handleDeleteProduct(product._id)}
@@ -422,6 +410,7 @@ export default function Products() {
               )}
             </tbody>
           </table>
+
           {totalPages > 1 && (
             <div className="product-pagination">
               <button
@@ -430,7 +419,6 @@ export default function Products() {
               >
                 Prev
               </button>
-
               {[...Array(totalPages)].map((_, i) => (
                 <button
                   key={i}
@@ -440,7 +428,6 @@ export default function Products() {
                   {i + 1}
                 </button>
               ))}
-
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((p) => p + 1)}

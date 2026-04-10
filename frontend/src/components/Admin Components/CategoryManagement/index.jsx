@@ -115,11 +115,6 @@ export default function CategoryManagement() {
       return false;
     }
 
-    if (!categoryData.discount.trim()) {
-      setError('Discount information is required');
-      return false;
-    }
-
     if (!categoryData.id && !categoryData.image && !previewImage) {
       setError('Please select an image for the category');
       return false;
@@ -138,8 +133,8 @@ export default function CategoryManagement() {
     setError(null);
     setSuccess(null);
 
-    if (!categoryData.name || !categoryData.discount) {
-      setError('All fields are required');
+    if (!categoryData.name) {
+      setError('Category name is required');
       return;
     }
 
